@@ -69,9 +69,9 @@ Correct Predictions:
 
 False Predictions:
 
-![Object Detection example images with false predictions 1](https://github.com/SelinaHeller/Campus_Detection/blob/main/individualImageNR12.jpg?raw=true)
-![Object Detection example images with false predictions 2](https://github.com/SelinaHeller/Campus_Detection/blob/main/individualImgeNR7.jpg?raw=true)
-![Object Detection example images with false predictions 3](https://github.com/SelinaHeller/Campus_Detection/blob/main/individualImageNR3.jpg?raw=true)
+![Object Detection example images with false predictions 1](https://github.com/SelinaHeller/Campus_Detection/blob/main/individualImageNR12.png?raw=true)
+![Object Detection example images with false predictions 2](https://github.com/SelinaHeller/Campus_Detection/blob/main/individualImgeNR7.png?raw=true)
+![Object Detection example images with false predictions 3](https://github.com/SelinaHeller/Campus_Detection/blob/main/individualImageNR3.png?raw=true)
 
 These issues are foreseeable because the buildings of type 10 are rather generic-looking
 buildings with white walls and no color on the windowsill like buildings with type 30 or
