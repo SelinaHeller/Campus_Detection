@@ -81,5 +81,5 @@ to decide if it is a 6 or an 8 because they are so similar. Other numbers are a 
 
 A more accurate analysis of these first impressions is provided by the metrics of the COCO and PASCAL VOC evaluation protocol: 
 
-![Mean Average Precision of the model on the validation set](https://github.com/SelinaHeller/Campus_Detection/blob/main/mAPVglPascCOCO.jpg?raw=true)
+![Mean Average Precision of the model on the validation set](https://github.com/SelinaHeller/Campus_Detection/blob/main/mAPVglPascCOCO.png?raw=true)
 ![Mean Average Precision of the model on the test set](https://github.com/SelinaHeller/Campus_Detection/blob/main/CocovsPascalTest.png?raw=true)
