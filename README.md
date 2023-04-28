@@ -7,5 +7,72 @@ In this thesis, a custom object detector is developed to detect landmarks on the
 
 # Dataset
 In preparation for the creation of the dataset used for this thesis, possible classes were considered. These classes should orientate themselves on the landmarks in OSM as well as other well recognizable objects. Landmarks in OSM are visible on the map ![Map of Campus Kaiserslautern](https://github.com/SelinaHeller/Campus_Detection/blob/main/mapTU.pdf?raw=true) and include building entrances, waste bins, hydrants, artwork, benches, fitness stations, and many more. But for this thesis, only the named ones are considered. Also considered are recognizable objects like the types of buildings, since they differ from one another. This means that buildings with numbers in the 40s look alike as well as buildings with their numbers in the 30s and the 10s. A visualization of which buildings belong to which type can be seen on this map ![Edited map of Campus Kaiserslautern](https://github.com/SelinaHeller/Campus_Detection/blob/main/mapTUbearbeitet.pdf?raw=true). Also, some buildings differ from each other and the ones with the
-same number range, so they get their own classes, like the central university library, the bistro36, the mensa, and the buildings 42 and 47. Also, the numbers of the buildings can often be seen and be used for localization. On the map a listing of all classes recognizable with this detector can be seen. The dataset is then created by driving the route marked on this map ![Route taken on campus](https://github.com/SelinaHeller/Campus_Detection/blob/main/MapWithRoute.jpg?raw=true) on the campus of the TU Kaiserslautern. The robot used for this task is the Delivery-Robot ![Delivery Robot of the RRLab](https://github.com/SelinaHeller/Campus_Detection/blob/main/PostBot.png?raw=true), which was designed to transport heavy loads on the campus. For this dataset only the possible routes on the outside of buildings are considered since within the buildings are no OSM landmarks that are considered for the localization of the robot at this time. Also, the robot has to be able to drive the possible routes, which means that no points only reachable by stairs are on the route. Since the robot itself is used to generate the image data all of the buildings, which can be reached by the robot on the selected route are covered. The two selected routes are inspired by the most popular paths on the university site, which can be reached by the robot. One from the RRLAB entrance in Building 46 to the Mensa and Building 42 and the other from the RRLAB entrance to Building 11. On these routes, many landmarks, that are marked
+same number range, so they get their own classes, like the central university library, the bistro36, the mensa, and the buildings 42 and 47. Also, the numbers of the buildings can often be seen and be used for localization. On the map a listing of all classes recognizable with this detector can be seen. The dataset is then created by driving the route marked on this map on the campus of the TU Kaiserslautern. ![Route taken on campus](https://github.com/SelinaHeller/Campus_Detection/blob/main/MapWithRoute.jpg?raw=true) The robot used for this task is the Delivery-Robot, which was designed to transport heavy loads on the campus. ![Delivery Robot of the RRLab](https://github.com/SelinaHeller/Campus_Detection/blob/main/PostBot.png?raw=true) For this dataset only the possible routes on the outside of buildings are considered since within the buildings are no OSM landmarks that are considered for the localization of the robot at this time. Also, the robot has to be able to drive the possible routes, which means that no points only reachable by stairs are on the route. Since the robot itself is used to generate the image data all of the buildings, which can be reached by the robot on the selected route are covered. The two selected routes are inspired by the most popular paths on the university site, which can be reached by the robot. One from the RRLAB entrance in Building 46 to the Mensa and Building 42 and the other from the RRLAB entrance to Building 11. On these routes, many landmarks, that are marked
 in OSM, can be seen and every class considered before is covered. 
+
+# Data Preprocessing
+Not all of the 90.000 collected images were suitable for training a good working model. The selection process the rules for the images are
+1. Every image with motion blur is discarded
+2. Every image with an object smaller than easily visible to the naked eye is discarded
+3. Every image with partial objects is discarded if only half or less of the object is visible
+
+After sorting out all of these images as well as the ones, which are basically the same, because of the slow speed of the robot, the dataset still has 13.466 images that should be labeled and used for the training.
+
+Image Augmentation: The amount of images in the dataset is quite low after the selection of suitable images therefore augmentation provides a viable option to amplify the performance of the network. There are 8 of the options chosen, that the TensorFlow object detection API provides. This also means, that the augmentation is not made manually before the training, but automatically during the training. The chosen options include:
+
+1. horizontal flip and
+2. brightness adjustment together with
+3. contrast adjustment and
+4. hue adjustment and
+5. saturation adjustment and
+6. image crop and
+7. colour distortion and
+8. gaussian patches 
+
+These augmentations are chosen because of the task the model should be able to solve. This means that a flip of the image in another way than horizontal would not make much sense, since the camera on the robot does usually not give pictures to the model that are upside down. Brightness is important because of the weather. It can be a problem if the objects get illuminated too much or too little. The changing of the brightness as well as hue, contrast, and saturation are an attempt at countermeasure. Colour distortion can happen for the most diverse reasons and it is better to prepare the model for this. The
+crop and gaussian patches augmentation are there to take the camera and the possible problems with it into consideration, as well as help the detection of partial objects.
+
+# Dataset Overview
+After the preprocessing, the dataset consists of 13.466 annotated images. But a very uneven distribution of annotated instances per class can be seen. This is foreseeable because some classes naturally have more objects than others. And some can be seen from many points of the route and thus also have more instances. To even this, class-balancing is utilized on the 9 classes having less than 1000 instances. ![Instances per class](https://github.com/SelinaHeller/Campus_Detection/blob/main/ObjectsPerClass.jpg?raw=true). 990 additional images without annotated objects are inserted to prevent false-positive detections. The dataset consists of 19.858 images of which 13.466 are unique, 5.402 are duplicated and 990 are not annotated, which makes up 5% of the total number
+of images used in the dataset. With this addition, the model is more robust in case of a phase in the drive, where no landmark can be detected.
+
+# Model Overview
+The model used for this thesis should have some properties like:
+1. accuracy should be high
+2. memory usage should not be too high
+3. inference time should not be too high
+
+To achieve this the TensorFlow object detection API proposes different solutions, but for this thesis, the meta-architecture Faster R-CNN and the feature extractor ResNet50 are chosen. This is a proven combination and with the implementation used by the TensorFlow object detection API all the targets can be reached. ResNet50 is a 50 layer residual net, that has a smaller error rate than VGG. The architecture of ResNet50 consists of a 3-layer bottleneck block resulting in 50 layers. But the implementation used by the TensorFlow object detection API and also in this thesis makes a few changes to this architecture to change the output stride to 16 instead of 32 to increase the mean average precision. This is achieved by changing the conv5_1 layer to have stride 1 instead of 2 with the reduced stride being compensated by atrous convolutions in further layers.
+
+# Training
+To train the Faster R-CNN model with the TensorFlow object detection API a few steps have to be taken first. Because the images are annotated in 4.1.2 in the PASCAL VOC format, they can instantly be converted to tf_record files. This file format stores data in a sequenced structure and is optimized to use with TensorFlow. 
+
+Before that, a separation into training and validation sets has to be made, with 90% of the images in the training set and 10% of the images in the validation set. An additional test set is utilized later in the experiment section. In this section further images are generated from a test video and these are used to evaluate the model.
+
+After this conversion a train.record and a val.record file are existent, which can be used for training and validating the model. There is also the need for a label.pbtxt file, where all class names are stored together with their ID, which denotes the class number. Also, the .config file has to be adjusted for the own prerequisites and dataset. After all these preparations the training can be started. For this thesis, the network is trained for 250.000 steps and reaches a loss below 0.1.
+
+# Evaluation
+After the training ends the question, of how good the resulting model is, stays open. The loss can give only information about the model training on the training data but not about the final performance and the performance on unknown data. A look at the predictions of the model can give a first
+impression on the capabilities and problem fields, which then should be investigated further.
+
+![Object Detection example images with true predictions 1](https://github.com/SelinaHeller/Campus_Detection/blob/main/TruePredictions.jpg?raw=true)
+![Object Detection example images with true predictions 2](https://github.com/SelinaHeller/Campus_Detection/blob/main/TruePredictions.jpg?raw=true)
+![Object Detection example images with true predictions 3](https://github.com/SelinaHeller/Campus_Detection/blob/main/TruePredictions.jpg?raw=true)
+
+![Object Detection example images with false predictions 1](https://github.com/SelinaHeller/Campus_Detection/blob/main/FalsePredictions.jpg?raw=true)
+![Object Detection example images with false predictions 2](https://github.com/SelinaHeller/Campus_Detection/blob/main/FalsePredictions.jpg?raw=true)
+![Object Detection example images with false predictions 3](https://github.com/SelinaHeller/Campus_Detection/blob/main/FalsePredictions.jpg?raw=true)
+
+These issues are foreseeable because the buildings of type 10 are rather generic-looking
+buildings with white walls and no color on the windowsill like buildings with type 30 or
+timber frames like buildings with type 40. There are other white buildings, mostly in
+the vicinity of building 47, which are not in the number range 10. The building numbers
+are problematic because the dataset already lacks many good examples for them. While
+other classes are easier to collect the numbers can often be seen in only a short time frame
+and then they are often quite far away. Some of the objects, like the number 46 and the
+number 48 are really small signs as can be seen in figure 5.5. It is even for humans hard
+to decide if it is a 6 or an 8 because they are so similar. Other numbers are a bit easier and therefore get detected better.
+
+A more accurate analysis of these first impressions is provided by the metrics of the COCO and PASCAL VOC evaluation protocol: 
+![Mean Average Precision of the model on the validation set](https://github.com/SelinaHeller/Campus_Detection/blob/main/mAPVglPascCoco.jpg?raw=true)
+![Mean Average Precision of the model on the test set](https://github.com/SelinaHeller/Campus_Detection/blob/main/CocovsPascalTest.png?raw=true)
