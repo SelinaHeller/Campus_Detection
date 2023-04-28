@@ -61,9 +61,9 @@ After this conversion a train.record and a val.record file are existent, which c
 After the training ends the question, of how good the resulting model is, stays open. The loss can give only information about the model training on the training data but not about the final performance and the performance on unknown data. A look at the predictions of the model can give a first
 impression on the capabilities and problem fields, which then should be investigated further.
 
-![Object Detection example images with true predictions 1](https://github.com/SelinaHeller/Campus_Detection/blob/main/TruePredictions.jpg?raw=true)
-![Object Detection example images with true predictions 2](https://github.com/SelinaHeller/Campus_Detection/blob/main/TruePredictions.jpg?raw=true)
-![Object Detection example images with true predictions 3](https://github.com/SelinaHeller/Campus_Detection/blob/main/TruePredictions.jpg?raw=true)
+![Object Detection example images with true predictions 1](https://github.com/SelinaHeller/Campus_Detection/blob/main/IndividualImage13.png?raw=true)
+![Object Detection example images with true predictions 2](https://github.com/SelinaHeller/Campus_Detection/blob/main/IndividualImageEV6.png?raw=true)
+![Object Detection example images with true predictions 3](https://github.com/SelinaHeller/Campus_Detection/blob/main/IndividualImageEV7.png?raw=true)
 
 ![Object Detection example images with false predictions 1](https://github.com/SelinaHeller/Campus_Detection/blob/main/FalsePredictions.jpg?raw=true)
 ![Object Detection example images with false predictions 2](https://github.com/SelinaHeller/Campus_Detection/blob/main/FalsePredictions.jpg?raw=true)
