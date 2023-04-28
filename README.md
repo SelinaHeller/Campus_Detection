@@ -87,3 +87,6 @@ A more accurate analysis of these first impressions is provided by the metrics o
 
 ![Mean Average Precision of the model on the validation set](https://github.com/SelinaHeller/Campus_Detection/blob/main/mAPVglPascCOCO.png?raw=true)
 ![Mean Average Precision of the model on the test set](https://github.com/SelinaHeller/Campus_Detection/blob/main/CocovsPascalTest.png?raw=true)
+
+# Further Information
+If you are interested in the whole process you can read about it in more detail in my bachelor thesis ![Link to Bachelor Thesis](https://github.com/SelinaHeller/Campus_Detection/blob/main/Bachelorarbeit_Selina_Heller?raw=true)
